@@ -1,5 +1,6 @@
 #include "ylex.h"
 #include <iostream>
+#include <string>
 #include <unordered_map>
 
 static const std::unordered_map<std::string_view, YKindOfTokens> listOfKeywords = {
@@ -30,11 +31,26 @@ static bool isWhiteSpace(const char& c) {
     return c == ' ' || c == '\t';
 }
 
+static bool isAlphaNumeric(const char& c) {
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+static std::string bufferChar(size_t* i, const std::string_view input_file) {
+    std::string buffer;
+    while (*i < input_file.size() && isAlphaNumeric(input_file[*i])) {
+        buffer += input_file[(*i)++];
+    }
+    return buffer;
+}
+
+
 std::vector<YToken> Tokenizer(std::string_view input_file) {
     std::vector<YToken> tokens;
     unsigned int line = 1;
     unsigned int column = 1;
-    for (char character : input_file) {
+    for (size_t i = 0; i < input_file.size(); ++i) {
+        char character = input_file[i];
+
         // Read line characters
         if (character == '\n') {
             line++;
@@ -50,6 +66,26 @@ std::vector<YToken> Tokenizer(std::string_view input_file) {
         if (listOfSingleSymbols.contains(character)) {
             tokens.emplace_back( listOfSingleSymbols.at(character), Position(line, column));
         }
+
+        if (i + 1 < input_file.size()) {
+            if (auto two_chars = std::string{character, input_file[i+1]}; listOfDoubleSymbols.contains(two_chars)) {
+                tokens.emplace_back(listOfDoubleSymbols.at(two_chars), Position(line, column));
+                i++; // consume the second char
+                column += 2;
+                continue;
+            }
+        }
+
+        if (auto buffer = bufferChar( &i, input_file); !buffer.empty()) {
+            if (listOfKeywords.contains(buffer)) {
+                tokens.emplace_back(listOfKeywords.at(buffer), Position(line, column));
+            } else {
+                tokens.emplace_back(YKindOfTokens::YTK_Identifier, Position(line, column));
+            }
+            column += buffer.size();
+            continue;
+        }
+
         column++;
     }
 
