@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/yumiLang.dir/yumi/main.cpp.o CMakeFiles/yumiLang.dir/yumi/ylex.cpp.o -o yumiLang 

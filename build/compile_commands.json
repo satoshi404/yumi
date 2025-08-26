@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/satoshi/Documentos/yumi_lang/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/yumiLang.dir/yumi/main.cpp.o -c /home/satoshi/Documentos/yumi_lang/yumi/main.cpp",
+  "file": "/home/satoshi/Documentos/yumi_lang/yumi/main.cpp"
+},
+{
+  "directory": "/home/satoshi/Documentos/yumi_lang/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/yumiLang.dir/yumi/ylex.cpp.o -c /home/satoshi/Documentos/yumi_lang/yumi/ylex.cpp",
+  "file": "/home/satoshi/Documentos/yumi_lang/yumi/ylex.cpp"
+}
+]

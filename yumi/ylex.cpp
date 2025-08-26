@@ -1,6 +1,7 @@
 #include "ylex.h"
 #include <iostream>
 #include <string>
+#include <cctype>
 #include <unordered_map>
 
 static const std::unordered_map<std::string_view, YKindOfTokens> listOfKeywords = {
@@ -50,13 +51,27 @@ static bool isAlphaNumeric(const char& c) {
            c == '_';
 }
 
-
 static std::string bufferChar(size_t* i, const std::string_view input_file) {
     std::string buffer;
     while (*i < input_file.size() && isAlphaNumeric(input_file[*i])) {
         buffer += input_file[(*i)++];
     }
     return buffer;
+}
+
+static std::string bufferNumber(size_t* i, const std::string_view input_file) {
+    std::string buffer;
+    while (*i < input_file.size() && std::isdigit(input_file[*i])) {
+        buffer += input_file[(*i)++];
+    }
+    return buffer;
+}
+
+static auto literals(size_t* i, const std::string_view input_file) {
+    const char& c = input_file[*i];
+    if (std::isdigit(c)) {
+        return bufferNumber(i, input_file);
+    }
 }
 
 
@@ -97,17 +112,24 @@ std::vector<YToken> Tokenizer(std::string_view input_file) {
             continue;
         }
 
-
-        if (auto buffer = bufferChar(&i, input_file); !buffer.empty()) {
-            i--; // compensar o for
+        if (std::isalpha(static_cast<unsigned char>(character)) || character == '_') {
+            auto buffer = bufferChar(&i, input_file);
+            i--; // compensar
             if (listOfKeywords.contains(buffer)) {
-                tokens.emplace_back(listOfKeywords.at(buffer),buffer ,Position(line, column));
+                tokens.emplace_back(listOfKeywords.at(buffer), buffer, Position(line, column));
             } else {
-                tokens.emplace_back(YKindOfTokens::YTK_Identifier,buffer, Position(line, column));
+                tokens.emplace_back(YKindOfTokens::YTK_Identifier, buffer, Position(line, column));
             }
             column += buffer.size();
             continue;
         }
+
+        if (std::isdigit(character)) {
+            auto buffer = bufferNumber(&i, input_file);
+            tokens.emplace_back(YKindOfTokens::YTK_LiteralInteger, std::stoi(buffer), Position(line, column));
+            column += buffer.size();
+        }
+
 
     }
 

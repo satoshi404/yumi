@@ -76,6 +76,9 @@ class YToken {
     YKindOfTokens selfKind;
     std::string id;
 
+    // Support just i32 (integer)
+    int32_t i32_lit;
+
     Position selfPos;
 
     public:
@@ -90,10 +93,18 @@ class YToken {
           const Position pos = Position())
             : selfKind(kind), id(std::move(identifier)),selfPos(pos) {};
 
+      YToken(
+        const YKindOfTokens kind = YKindOfTokens::YTK_Unknown,
+        const int32_t i32l = 0,
+        const Position pos = Position())
+          : selfKind(kind), i32_lit(i32l),selfPos(pos) {};
+
+
 
       [[nodiscard]] auto GetKind() const -> YKindOfTokens {return selfKind; };
       [[nodiscard]] auto GetPos() const -> Position { return selfPos; }
       [[nodiscard]] auto GetIdentifier() const -> std::string_view { return {id.data(), id.size()}; };
+      [[nodiscard]] auto GetLiteralInteger() const -> int32_t { return i32_lit; };
 
       void SetPos(const unsigned int line, const unsigned int column) {
           selfPos.line = line;
@@ -141,7 +152,7 @@ class YToken {
               // ===========================================================================
               case YKindOfTokens::YTK_Function:         return " (Keyword) Function";
               case YKindOfTokens::YTK_TStruct:          return " (Type) Struct";
-              case YKindOfTokens::YTK_TI32:             return " (Type) Integer";
+              case YKindOfTokens::YTK_TI32:             return " (Type i32) Integer";
               case YKindOfTokens::YTK_TString:          return " (Type) String";
               case YKindOfTokens::YTK_TF32:             return " (Type) Float";
               case YKindOfTokens::YTK_TBool:            return " (Type) Boolean";

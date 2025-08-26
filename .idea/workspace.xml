@@ -26,7 +26,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aedd94a6-0ee9-4a47-8706-392b8b14b801" name="Changes" comment="slex_update">
+    <list default="true" id="aedd94a6-0ee9-4a47-8706-392b8b14b801" name="Changes" comment="slex_more_tokens">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yumi/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/yumi/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yumi/ylex.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/yumi/ylex.cpp" afterDir="false" />
@@ -116,7 +116,7 @@
       <workItem from="1756230081287" duration="767000" />
       <workItem from="1756230859374" duration="3856000" />
       <workItem from="1756234727681" duration="1130000" />
-      <workItem from="1756235868270" duration="1332000" />
+      <workItem from="1756235868270" duration="4938000" />
     </task>
     <task id="LOCAL-00001" summary="slex_update">
       <option name="closed" value="true" />
@@ -142,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756151655810</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="slex_more_tokens">
+      <option name="closed" value="true" />
+      <created>1756237217623</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1756237217623</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,6 +163,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="slex_update" />
-    <option name="LAST_COMMIT_MESSAGE" value="slex_update" />
+    <MESSAGE value="slex_more_tokens" />
+    <option name="LAST_COMMIT_MESSAGE" value="slex_more_tokens" />
   </component>
 </project>
