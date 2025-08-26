@@ -8,7 +8,10 @@ static const std::unordered_map<std::string_view, YKindOfTokens> listOfKeywords 
     { "return", YKindOfTokens::YTK_Return},
     { "var", YKindOfTokens::YTK_Var},
     { "final", YKindOfTokens::YTK_Final},
-    { "i32", YKindOfTokens::YTK_I32},
+    { "i32", YKindOfTokens::YTK_TI32},
+    { "f32", YKindOfTokens::YTK_TF32},
+    { "string", YKindOfTokens::YTK_TString},
+    { "struct", YKindOfTokens::YTK_TStruct}
 };
 
 static const std::unordered_map<char, YKindOfTokens> listOfSingleSymbols {
@@ -20,20 +23,33 @@ static const std::unordered_map<char, YKindOfTokens> listOfSingleSymbols {
     { '*', YKindOfTokens::YTK_Multiply },
     { '=', YKindOfTokens::YTK_Equal},
     { ',', YKindOfTokens::YTK_Comma},
+    {'!', YKindOfTokens::YTK_Not},
+    { '<', YKindOfTokens::YTK_LessThan},
+    { '>', YKindOfTokens::YTK_GreaterThan},
 };
 
 static const std::unordered_map<std::string, YKindOfTokens> listOfDoubleSymbols = {
     { "->", YKindOfTokens::YTK_Arrow},
-    { "<=", YKindOfTokens::YTK_LessThanEqual}
+    { "<=", YKindOfTokens::YTK_LessThanEqual},
+    { ">=", YKindOfTokens::YTK_GreaterThanEqual},
+    { "!=", YKindOfTokens::YTK_NotEqual},
+    { "+=", YKindOfTokens::YTK_PlusEqual},
+    { "-=", YKindOfTokens::YTK_MinusEqual},
+    { "*=", YKindOfTokens::YTK_MultiplyEqual},
+    { "/=", YKindOfTokens::YTK_DivEqual},
 };
 
 static bool isWhiteSpace(const char& c) {
-    return c == ' ' || c == '\t';
+    return std::isspace(static_cast<unsigned char>(c));
 }
 
 static bool isAlphaNumeric(const char& c) {
-    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    return (c >= 'A' && c <= 'Z') || 
+           (c >= 'a' && c <= 'z') || 
+           (c >= '0' && c <= '9') ||
+           c == '_';
 }
+
 
 static std::string bufferChar(size_t* i, const std::string_view input_file) {
     std::string buffer;
@@ -62,32 +78,40 @@ std::vector<YToken> Tokenizer(std::string_view input_file) {
         if (isWhiteSpace(character)) { column++; continue; }
         #endif
 
-        // Lexer single symbol
-        if (listOfSingleSymbols.contains(character)) {
-            tokens.emplace_back( listOfSingleSymbols.at(character), Position(line, column));
-        }
-
         if (i + 1 < input_file.size()) {
-            if (auto two_chars = std::string{character, input_file[i+1]}; listOfDoubleSymbols.contains(two_chars)) {
+            std::string two_chars{character, input_file[i+1]};
+            if (listOfDoubleSymbols.contains(two_chars)) {
                 tokens.emplace_back(listOfDoubleSymbols.at(two_chars), Position(line, column));
                 i++; // consume the second char
                 column += 2;
-                continue;
+                continue; // <-
             }
         }
 
-        if (auto buffer = bufferChar( &i, input_file); !buffer.empty()) {
+
+        // Lexer single symbol
+        if (listOfSingleSymbols.contains(character)) {
+            printf("character %c\n", character);
+            tokens.emplace_back( listOfSingleSymbols.at(character), Position(line, column));
+            column++;
+            continue;
+        }
+
+
+        if (auto buffer = bufferChar(&i, input_file); !buffer.empty()) {
+            i--; // compensar o for
             if (listOfKeywords.contains(buffer)) {
-                tokens.emplace_back(listOfKeywords.at(buffer), Position(line, column));
+                tokens.emplace_back(listOfKeywords.at(buffer),buffer ,Position(line, column));
             } else {
-                tokens.emplace_back(YKindOfTokens::YTK_Identifier, Position(line, column));
+                tokens.emplace_back(YKindOfTokens::YTK_Identifier,buffer, Position(line, column));
             }
             column += buffer.size();
             continue;
         }
 
-        column++;
     }
+
+    tokens.emplace_back(YKindOfTokens::Eof, Position(line, column));
 
     return  tokens;
 }
